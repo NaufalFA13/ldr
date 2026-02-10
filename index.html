@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>My Diary</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Georgia',serif;
+  height:100vh;
+  overflow:hidden;
+  background:linear-gradient(180deg,#ffd6e7,#ffc1d9);
+}
+
+/* ===== WELCOME ===== */
+#welcome{
+  position:absolute;inset:0;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  transition:transform .8s ease;
+}
+#welcome.hidden{transform:translateX(-100%)}
+#welcome h1{font-size:48px;margin-bottom:12px}
+#welcome p{font-size:18px;opacity:.8}
+
+/* ===== BOOK ===== */
+#book-wrapper{
+  position:absolute;inset:0;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  transform:translateX(100%);
+  transition:transform .8s ease;
+}
+#book-wrapper.active{transform:translateX(0)}
+
+.book{
+  width:min(90vw,420px);
+  height:min(85vh,640px);
+  background:#fffdf8;
+  border-radius:28px;
+  box-shadow:0 20px 50px rgba(0,0,0,.15);
+  position:relative;
+  overflow:hidden;
+}
+
+/* garis buku */
+.book::before{
+  content:"";
+  position:absolute;inset:0;
+  background:repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 26px,
+    rgba(0,0,0,.06) 27px
+  );
+  pointer-events:none;
+}
+
+.page{
+  position:absolute;inset:0;
+  padding:56px 36px 80px;
+  transition:transform .6s ease;
+}
+
+.page h2{margin-bottom:16px}
+.page p{
+  line-height:1.7;
+  font-size:16px;
+  white-space: pre-line;
+}
+
+.page-indicator{
+  position:absolute;
+  bottom:20px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#8a2d4f;
+  color:#fff;
+  padding:6px 16px;
+  border-radius:20px;
+  font-size:14px;
+}
+
+/* ===== PANDA ===== */
+.panda{
+  position:absolute;
+  right:20px;
+  bottom:40px;
+  width:90px;height:90px;
+}
+.panda .head{
+  width:100%;height:100%;
+  background:#fff;
+  border-radius:50%;
+  position:relative;
+}
+.panda .ear{
+  width:26px;height:26px;
+  background:#000;
+  border-radius:50%;
+  position:absolute;top:-8px
+}
+.panda .ear.left{left:8px}
+.panda .ear.right{right:8px}
+.panda .eye{
+  width:14px;height:18px;
+  background:#000;
+  border-radius:50%;
+  position:absolute;top:34px
+}
+.panda .eye.left{left:26px}
+.panda .eye.right{right:26px}
+.panda .mouth{
+  width:18px;height:10px;
+  border-bottom:3px solid #000;
+  border-radius:0 0 20px 20px;
+  position:absolute;bottom:22px;left:50%;transform:translateX(-50%)
+}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:480px){
+  .page{padding:44px 22px 72px}
+  .page p{font-size:15px}
+}
+.photo-wrap{
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  margin:18px 0;
+}
+
+.photo-wrap img{
+  width:45%;
+  max-width:140px;
+  border-radius:14px;
+  object-fit:cover;
+  box-shadow:0 6px 18px rgba(0,0,0,.15);
+}
+
+</style>
+</head>
+<body>
+
+<div id="welcome">
+  <h1>HI CIEL</h1>
+  <p>Ini cuma isi hati aku aja + pandangan aku selama aku pulang di tasik, hope u enjoy this web, <br>Love U</p><br>
+  <P>SWIPE KIRI</P>
+</div>
+
+<div id="book-wrapper">
+  <div class="book" id="book">
+    <div class="page" id="page">
+      <h2 id="title"></h2>
+      <p id="content"></p>
+      <div class="page-indicator" id="indicator"></div>
+    </div>
+  </div>
+</div>
+
+<div class="panda">
+  <div class="head">
+    <div class="ear left"></div>
+    <div class="ear right"></div>
+    <div class="eye left"></div>
+    <div class="eye right"></div>
+    <div class="mouth" id="mouth"></div>
+  </div>
+</div>
+
+<audio id="bgm" src="lagu.mp3" loop></audio>
+
+<script>
+const pages=[
+  {t:"Hi Cielo",c:"Tasikmalaya pernah menjadi tempat ternyaman untuk kita berdua, meski hanya bersinggah selama dua minggu disana, langkahku pelan karena tak ingin hari cepat menutup pintu.\n\n\ndua minggu itu aku belajar, bahwa rindu bisa diam selama kamu ada di dekatkum ia tidak bertanya, tak menuntut, hanya menunggu waktu untuk bertemu lagi."},
+{
+  t: "Hari Kedua",
+  c: `
+  Kita duduk, tertawa,  
+  menghabiskan hal-hal sederhana—jalanan, malam, dan cerita kecil.
+
+  <div class="photo-wrap">
+    <img src="foto1.jpg" alt="kenangan lucu">
+    <img src="foto2.jpg" alt="momen kecil">
+  </div>
+
+  Semua itu sekarang menjadi kenangan  
+  paling ramai di kepalaku.
+  `
+},
+
+  {t:"Hari Ketiga",c:"Pelan-pelan aku mulai berdamai dengan diriku."},
+  {t:"Hari Keempat",c:"Tidak apa lelah, yang penting tidak menyerah."},
+  {t:"Hari Kelima",c:"Aku masih di sini, masih mencoba."},
+  {t:"Hari Keenam",c:"Terima kasih sudah bertahan sejauh ini."}
+];
+let index=0;
+const title=document.getElementById('title');
+const content=document.getElementById('content');
+const indicator=document.getElementById('indicator');
+const mouth=document.getElementById('mouth');
+const bgm=document.getElementById('bgm');
+
+function render(){
+  title.textContent=pages[index].t;
+  content.innerHTML = pages[index].c;
+  indicator.textContent=`${index+1} / ${pages.length}`;
+}
+render();
+
+// swipe
+let startX=0;
+document.addEventListener('touchstart',e=>startX=e.touches[0].clientX);
+document.addEventListener('touchend',e=>{
+  const dx=e.changedTouches[0].clientX-startX;
+  if(dx<-60)next();
+  if(dx>60)prev();
+});
+
+// keyboard
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight')next();
+  if(e.key==='ArrowLeft')prev();
+});
+
+function next(){if(index<pages.length-1){index++;render();}}
+function prev(){if(index>0){index--;render();}}
+
+// welcome
+let started=false;
+document.addEventListener('touchend',(e)=>{
+  if(!started){
+    start();
+  } else {
+    const dx=e.changedTouches[0].clientX-startX;
+    if(dx<-60)next();
+    if(dx>60)prev();
+  }
+});
+
+document.addEventListener('keydown',e=>{
+  if(!started && e.key==='ArrowRight'){
+    start();
+  } else if(started){
+    if(e.key==='ArrowRight')next();
+    if(e.key==='ArrowLeft')prev();
+  }
+});
+
+function start(){
+  started=true;
+  document.getElementById('welcome').classList.add('hidden');
+  document.getElementById('book-wrapper').classList.add('active');
+  bgm.play();
+}
+
+// panda expression
+setInterval(()=>{
+  const r=Math.random();
+  mouth.style.borderBottomWidth=r>.5?'3px':'1px';
+},5000);
+</script>
+</body>
+</html>
+
