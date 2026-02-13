@@ -199,6 +199,14 @@ body{
     max-width:120px;
   }
 }
+.panda{
+  cursor:pointer;
+  transition:transform .2s ease;
+}
+
+.panda:active{
+  transform:scale(.95);
+}
 
 </style>
 </head>
@@ -340,7 +348,6 @@ function start(){
   document.getElementById('welcome').classList.add('hidden');
   document.getElementById('book-wrapper').classList.add('active');
   render();
-  bgm.play();
 }
 
 // panda expression
@@ -348,8 +355,25 @@ setInterval(()=>{
   const r=Math.random();
   mouth.style.borderBottomWidth=r>.5?'3px':'1px';
 },5000);
+  
+const panda = document.querySelector('.panda');
+let isPlaying = false;
+
+panda.addEventListener('click', () => {
+  if (!isPlaying) {
+    bgm.play();
+    isPlaying = true;
+    mouth.style.borderBottomWidth = '5px'; // senyum lebih besar
+  } else {
+    bgm.pause();
+    isPlaying = false;
+    mouth.style.borderBottomWidth = '1px'; // senyum kecil
+  }
+});
+
 </script>
 </body>
 </html>
+
 
 
