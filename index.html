@@ -141,6 +141,64 @@ body{
   object-fit:cover;
   box-shadow:0 6px 18px rgba(0,0,0,.15);
 }
+/* ===== CONTENT FIX ===== */
+#content{
+  line-height:1.7;
+  font-size:16px;
+  white-space:pre-line;
+  opacity:0;
+  transition:opacity .6s ease;
+}
+
+#content.show{
+  opacity:1;
+}
+
+/* ===== PHOTO ANIMATION ===== */
+.photo-wrap{
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  margin:22px 0;
+  opacity:0;
+  transform:translateY(10px);
+  transition:all .6s ease;
+}
+
+.photo-wrap.show{
+  opacity:1;
+  transform:translateY(0);
+}
+
+.photo-wrap img{
+  width:45%;
+  max-width:140px;
+  border-radius:14px;
+  object-fit:cover;
+  box-shadow:0 6px 18px rgba(0,0,0,.15);
+}
+
+/* ===== RESPONSIVE IMPROVEMENT ===== */
+@media(max-width:768px){
+  .book{
+    width:92vw;
+    height:88vh;
+  }
+}
+
+@media(max-width:480px){
+  .page{
+    padding:44px 20px 70px;
+  }
+
+  #content{
+    font-size:15px;
+  }
+
+  .photo-wrap img{
+    max-width:120px;
+  }
+}
 
 </style>
 </head>
@@ -176,76 +234,98 @@ body{
 
 <script>
 const pages=[
-  {t:"Hi Cielo",c:"Tasikmalaya pernah menjadi tempat ternyaman untuk kita berdua, meski hanya bersinggah selama dua minggu disana, langkahku pelan karena tak ingin hari cepat menutup pintu.\n\n\ndua minggu itu aku belajar, bahwa rindu bisa diam selama kamu ada di dekatkum ia tidak bertanya, tak menuntut, hanya menunggu waktu untuk bertemu lagi."},
-{
-  t: "Hari Kedua",
-  c: `
-  Kita duduk, tertawa,  
-  menghabiskan hal-hal sederhana—jalanan, malam, dan cerita kecil.
-
-  <div class="photo-wrap">
-    <img src="foto1.jpg" alt="kenangan lucu">
-    <img src="foto2.jpg" alt="momen kecil">
-  </div>
-
-  Semua itu sekarang menjadi kenangan  
-  paling ramai di kepalaku.
-  `
-},
-
-  {t:"Hari Ketiga",c:"Pelan-pelan aku mulai berdamai dengan diriku."},
-  {t:"Hari Keempat",c:"Tidak apa lelah, yang penting tidak menyerah."},
-  {t:"Hari Kelima",c:"Aku masih di sini, masih mencoba."},
-  {t:"Hari Keenam",c:"Terima kasih sudah bertahan sejauh ini."}
+  {t:"Hi Cielo",c:"Tasikmalaya pernah menjadi tempat ternyaman untuk kita berdua, meski hanya bersinggah selama dua minggu disana, langkahku pelan karena tak ingin hari cepat menutup pintu.\n\n\ndua minggu itu aku belajar, bahwa rindu bisa diam selama kamu ada di dekatku, ia tidak bertanya, tak menuntut, hanya menunggu waktu untuk bertemu lagi."},
+  {
+    t:"Cielo",
+    c:`
+    Kita duduk, tertawa,  
+    menghabiskan hal-hal sederhana—jalanan, malam, dan cerita kecil.
+    <div class="photo-wrap">
+      <img src="foto1.jpg">
+      <img src="foto2.jpg">
+    </div>
+    Semua itu sekarang menjadi kenangan  
+    paling ramai di kepalaku.
+    `
+  },
+  {t:"Our First Kiss",c:"sekarang jarak menaruhmu jauh namun ingatan menaruhmu dekat aku menulis ini agar rindu tahu ke mana harus singgah\n\n\nbahkan detik pertama ketika bibir bertemu aku tak ingat dunia hanya degup yang gugup dan senyum yang tak sempat kusembunyikan\n\n\nlalu perpisahan datang lagitanpa izin, tanpa basa-basi kota itu melepas aku pulang dan rindu kembali mendapat tugasnya"},
+  {t:"Ldr?",c:"LDR mungkin memisahkan kota,tapi tidak memisahkan niat.Aku akan bertahan,sampai jarak hanya jadi cerita.\n\n\nAku pulang membawa jarak,tapi meninggalkan separuh hatiku di sana.Jika angin Tasikmalaya lewat malam ini,titipkan padanya: aku masih merindu."},
+  {t:"Pesan Ku",c:"Aku masih di sini, masih mencoba memberikan mu yang terbaik, semoga dengan adanya jarak kita masih tetap bisa bersama,\n\n\nSemoga di hari ulang tahunku nanti aku mendapatkan hal-hal yang bahagia untuk kita bersama\n\n\nDan maaff jika tidak ada hari valentine atau coklat aku ingin memberikan hal-hal manis itu saat kita berdekatan."},
+  {t:"Pesan Ku",c:"Terimakasih karna sudah mau terbuka dalam komunikasi kita.\n\n\n Mungkin ini kekanak-kanakan tapi aku selalu ingin kita bisa terus terbuka dan saling mencintai seperti ini\n\n\nEntah kamu sayang aku sebagai Amor atau Naufal yang pasti aku berharap tak ada orang lain lagi.\n\n\n Your My Purple Person"},
+  {t:"Penutup",c:"Terima kasih sudah bertahan sejauh ini bersamaku, aku harap kamu bahagia dengan diri ini, dengan segala yang kita punya, dan rintangan yang telah kita lewati,\n\n\nMaaf jika aku masi membuatmu kecewa, tapi aku berusaha untuk jadi yang terbaik dan membuatmu bangga\n\n\nSemogga experience yang kita punya bertahan selamanya di nadi dan darah kita sampai kita tua\n\n\nLove u Amor"}
 ];
+
 let index=0;
+let started=false;
+let startX=0;
+
 const title=document.getElementById('title');
 const content=document.getElementById('content');
 const indicator=document.getElementById('indicator');
-const mouth=document.getElementById('mouth');
 const bgm=document.getElementById('bgm');
 
 function render(){
-  title.textContent=pages[index].t;
+  content.classList.remove('show');
   content.innerHTML = pages[index].c;
-  indicator.textContent=`${index+1} / ${pages.length}`;
+  title.textContent = pages[index].t;
+  indicator.textContent = `${index+1} / ${pages.length}`;
+
+  setTimeout(()=>{
+    content.classList.add('show');
+    const photo=document.querySelector('.photo-wrap');
+    if(photo){
+      setTimeout(()=>photo.classList.add('show'),200);
+    }
+  },100);
 }
+
 render();
 
-// swipe
-let startX=0;
-document.addEventListener('touchstart',e=>startX=e.touches[0].clientX);
+/* ===== NAVIGATION ===== */
+function next(){
+  if(!started) return;
+  if(index < pages.length-1){
+    index++;
+    render();
+  }
+}
+
+function prev(){
+  if(!started) return;
+  if(index > 0){
+    index--;
+    render();
+  }
+}
+
+/* ===== TOUCH ===== */
+document.addEventListener('touchstart',e=>{
+  startX=e.touches[0].clientX;
+});
+
 document.addEventListener('touchend',e=>{
   const dx=e.changedTouches[0].clientX-startX;
-  if(dx<-60)next();
-  if(dx>60)prev();
-});
 
-// keyboard
-document.addEventListener('keydown',e=>{
-  if(e.key==='ArrowRight')next();
-  if(e.key==='ArrowLeft')prev();
-});
-
-function next(){if(index<pages.length-1){index++;render();}}
-function prev(){if(index>0){index--;render();}}
-
-// welcome
-let started=false;
-document.addEventListener('touchend',(e)=>{
-  if(!started){
+  // Swipe pertama hanya untuk start
+  if(!started && dx < -60){
     start();
-  } else {
-    const dx=e.changedTouches[0].clientX-startX;
-    if(dx<-60)next();
-    if(dx>60)prev();
+    return;
+  }
+
+  if(started){
+    if(dx < -60) next();
+    if(dx > 60) prev();
   }
 });
 
+/* ===== KEYBOARD ===== */
 document.addEventListener('keydown',e=>{
   if(!started && e.key==='ArrowRight'){
     start();
-  } else if(started){
+    return;
+  }
+
+  if(started){
     if(e.key==='ArrowRight')next();
     if(e.key==='ArrowLeft')prev();
   }
@@ -253,8 +333,10 @@ document.addEventListener('keydown',e=>{
 
 function start(){
   started=true;
+  index=0; // pastikan tetap di halaman 1
   document.getElementById('welcome').classList.add('hidden');
   document.getElementById('book-wrapper').classList.add('active');
+  render();
   bgm.play();
 }
 
